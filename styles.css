@@ -1,0 +1,87 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'pixeled', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+    height: 100svh;
+}
+
+h1 {
+    color: #fde047;
+    padding: 50px;
+    font-size: 3.5rem;
+}
+
+header {
+    display: flex;
+    justify-content: center;
+    background-color: #0c4a6e;
+    box-shadow: 0 0 5px black;
+    position: relative;
+}
+
+main {
+    background-color: #0369a1;
+    width: 100vw;
+    height: 20vh;
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.gameBoard {
+    background-color: aliceblue;
+    width: 600px;
+    height: 600px;
+    display: grid;
+    grid-template: repeat(3, 200px) / repeat(3, 200px);
+    position: relative;
+}
+
+.card {
+    text-align: center;
+    font-size: 150px;
+    border: 1px solid red;
+    padding: 15px 0 15px 15px;
+}
+
+.info {
+    position: absolute;
+    top: 58%;
+    left: 48%;
+    transform: translate(-50%, -50%);
+    color: #ef4444;
+    font-weight: bold;
+    font-size: 1.6rem;
+    white-space: nowrap;
+    background-color: #172554;
+    height: 100px;
+    width: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #172554;
+}
+
+.reset {
+    width: 100px;
+    height: 50px;
+}
+
+footer {
+
+}
+
+@font-face {
+    font-family: 'pixeled';
+    src: url(fonts/PressStart2P-Regular.ttf);
+}
