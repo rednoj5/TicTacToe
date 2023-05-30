@@ -44,12 +44,6 @@
                 gameBoard.game(target);
                 gameBoard.highliteCurrentPlayer();
             };
-            //AI IMPLEMENTATION BELOW
-            activePlayer = gameBoard.checkTurn();
-            algoMove();
-            gameBoard.render();
-            gameBoard.highliteCurrentPlayer();
-            //ABOVE
         },
         checkTurn: function() {
             let xLength = this.board.filter((e) => e === 'x').length;
@@ -85,8 +79,6 @@
             let xArray = this.xArray;
             let oArray = this.oArray;
 
-            let winner = '';
-
             let winConditions = [
                 [0, 1, 2],
                 [3, 4, 5],
@@ -102,21 +94,14 @@
                 let gameEnd1 = cond.every((num) => xArray.includes(num));
                 let gameEnd2 = cond.every((num) => oArray.includes(num));
                 if (gameEnd1 == true) {
-                    winner = 'x';
-                    break;
+                    return 'x';
                 } else if (gameEnd2 == true) {
-                    winner = 'o'
-                    break;
-                } else if (xArray.length > 4 && this.gameEnded === false) {
-                    winner = 'draw';
-                }
+                    return 'o';
+                } 
             };
-
-            // if (xArray.length > 4 && this.gameEnded === false) {
-            //     winner = 'draw';
-            // };
-
-            return winner;
+            if (xArray.length > 4 && this.gameEnded === false) {
+                    return 'draw';
+            };
         },
         declareWinner: function(player) {
             if (this.gameEnded === false) {
@@ -172,35 +157,4 @@
 
     gameBoard.init();
 
-    function algoMove() {
-        let bestScore = -Infinity;
-        let bestMove;
-        let board = gameBoard.board;
-        
-        for (let i = 0; i < 9; i++) {
-            if (board[i] === undefined) {
-                // console.log(board[i]);
-                board[i] = 'o';
-                let score = minimax(board, 0, true);
-                if (score > bestScore) {
-                    bestScore = score;
-                    bestMove = i;
-                }
-                board[i] = undefined;
-            }
-        }
-        // console.log(board);
-        board[bestMove] = 'o';
-        gameBoard.game(bestMove);
-    };
-
-    function minimax(board, depth, isMaximizing) {
-        return 1;
-    }
-
 })();
-
-// tests
-
-
-// console.log(PlayerX.getName())
