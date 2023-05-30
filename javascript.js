@@ -44,6 +44,12 @@
                 gameBoard.game(target);
                 gameBoard.highliteCurrentPlayer();
             };
+            //AI IMPLEMENTATION BELOW
+            activePlayer = gameBoard.checkTurn();
+            algoMove();
+            gameBoard.render();
+            gameBoard.highliteCurrentPlayer();
+            //ABOVE
         },
         checkTurn: function() {
             let xLength = this.board.filter((e) => e === 'x').length;
@@ -65,11 +71,21 @@
                 this.oArray.push(parseInt(index));
             };
 
-            this.checkWinner();
+            let winner = this.checkWinner();
+
+            if (winner === 'x') {
+                this.declareWinner('X');
+            } else if (winner === 'o') {
+                this.declareWinner('O');
+            } else if (winner === 'draw') {
+                this.declareDraw();
+            };
         },
         checkWinner: function() {
             let xArray = this.xArray;
             let oArray = this.oArray;
+
+            let winner = '';
 
             let winConditions = [
                 [0, 1, 2],
@@ -86,33 +102,41 @@
                 let gameEnd1 = cond.every((num) => xArray.includes(num));
                 let gameEnd2 = cond.every((num) => oArray.includes(num));
                 if (gameEnd1 == true) {
-                    this.declareWinner('X');
+                    winner = 'x';
                     break;
                 } else if (gameEnd2 == true) {
-                    this.declareWinner('O');
+                    winner = 'o'
                     break;
+                } else if (xArray.length > 4 && this.gameEnded === false) {
+                    winner = 'draw';
                 }
             };
 
-            if (xArray.length > 4 && this.gameEnded === false) {
-                this.declareDraw();
-            };
+            // if (xArray.length > 4 && this.gameEnded === false) {
+            //     winner = 'draw';
+            // };
+
+            return winner;
         },
         declareWinner: function(player) {
-            let info = document.createElement('div');
-            info.setAttribute('class', 'info');
-            info.textContent = `Player ${player} has won!`;
-            this.htmlMain.appendChild(info);
-            this.htmlBoard.style.filter = 'blur(4px)';
-            gameBoard.gameEnded = true;
+            if (this.gameEnded === false) {
+                let info = document.createElement('div');
+                info.setAttribute('class', 'info');
+                info.textContent = `Player ${player} has won!`;
+                this.htmlMain.appendChild(info);
+                this.htmlBoard.style.filter = 'blur(4px)';
+                gameBoard.gameEnded = true;
+            }
         },
         declareDraw: function() {
-            let info = document.createElement('div');
-            info.setAttribute('class', 'info');
-            info.textContent = `It's a draw!`;
-            this.htmlMain.appendChild(info);
-            this.htmlBoard.style.filter = 'blur(4px)';
-            gameBoard.gameEnded = true;
+            if (this.gameEnded === false) {
+                let info = document.createElement('div');
+                info.setAttribute('class', 'info');
+                info.textContent = `It's a draw!`;
+                this.htmlMain.appendChild(info);
+                this.htmlBoard.style.filter = 'blur(4px)';
+                gameBoard.gameEnded = true;
+            }
         },
         highliteCurrentPlayer: function() {
             let xArray = this.xArray;
@@ -136,15 +160,43 @@
             gameBoard.xArray = [];
             gameBoard.oArray = [];
             gameBoard.render();
-            let info = document.getElementsByClassName('info')[0];
-            gameBoard.htmlMain.removeChild(info);
-            gameBoard.htmlBoard.style.filter = '';
+            if (gameBoard.gameEnded === true) {
+                let info = document.getElementsByClassName('info')[0];
+                gameBoard.htmlMain.removeChild(info);
+                gameBoard.htmlBoard.style.filter = '';
+            }
             gameBoard.gameEnded = false;
             gameBoard.highliteCurrentPlayer();
         }
     };
 
     gameBoard.init();
+
+    function algoMove() {
+        let bestScore = -Infinity;
+        let bestMove;
+        let board = gameBoard.board;
+        
+        for (let i = 0; i < 9; i++) {
+            if (board[i] === undefined) {
+                // console.log(board[i]);
+                board[i] = 'o';
+                let score = minimax(board, 0, true);
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMove = i;
+                }
+                board[i] = undefined;
+            }
+        }
+        // console.log(board);
+        board[bestMove] = 'o';
+        gameBoard.game(bestMove);
+    };
+
+    function minimax(board, depth, isMaximizing) {
+        return 1;
+    }
 
 })();
 
