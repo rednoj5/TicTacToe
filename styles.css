@@ -32,32 +32,57 @@ main {
     width: 100vw;
     height: 20vh;
     flex-grow: 1;
+    display: grid;
+    grid-template-columns: 1fr 620px 1fr;
+    grid-template-rows: 1fr 620px 1fr;
+    position: relative;
+}
+
+.playerTurn {
+    grid-area: 1 / 2 / 2 / 3;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
+    color: #fde047;
+}
+
+.playerX, .playerO {
+    border: 2px solid #172554;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #7dd3fc;
+    opacity: 0.5;
+}
+
+.playerX {
+    opacity: 1;
 }
 
 .gameBoard {
-    background-color: aliceblue;
-    width: 600px;
-    height: 600px;
+    width: 620px;
+    height: 620px;
     display: grid;
     grid-template: repeat(3, 200px) / repeat(3, 200px);
     position: relative;
+    border: 10px solid #fafafa;
+    box-shadow: 0 0 10px black;
+    grid-area: 2 / 2 / 3 / 3;
 }
 
 .card {
     text-align: center;
     font-size: 150px;
-    border: 1px solid red;
     padding: 15px 0 15px 15px;
+    cursor: pointer;
+    background-color: #7dd3fc;
+    border: 2px solid #fafafa;
+}
+
+.card:hover {
+    background-color: #38bdf8;
 }
 
 .info {
-    position: absolute;
-    top: 58%;
-    left: 48%;
-    transform: translate(-50%, -50%);
     color: #ef4444;
     font-weight: bold;
     font-size: 1.6rem;
@@ -70,15 +95,61 @@ main {
     justify-content: center;
     border-radius: 10px;
     box-shadow: 0 0 10px #172554;
+    position: absolute;
+    grid-area: 2 / 2 / 3 / 3;
+    align-self: center;
+    justify-self: center;
 }
 
 .reset {
-    width: 100px;
-    height: 50px;
+    width: 200px;
+    height:100px;
+    color: #fde047;
+    cursor: pointer;
+    grid-column: 3;
+    grid-row: 2;
+    justify-self: center;
+    background-color: #7dd3fc;
+    border: none;
+    box-shadow: 0 6px 0 3px #172554;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1.5rem;
+    margin-top: 100px;
+}
+
+.reset:hover {
+    background-color: #38bdf8;
+}
+
+.reset:active {
+    box-shadow: 0 3px 0 2px #172554;
+    transform: translateY(4px);
 }
 
 footer {
+    position: fixed;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-height: 40px;
+    gap: 10px;
+    width: 100%;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #fde047;
+}
 
+#gitLogo {
+    width: 24px;
+    height: auto;
+    transition: transform .2s;
+    filter: invert(90%) sepia(49%) saturate(490%) hue-rotate(331deg) brightness(103%) contrast(99%);
+}
+
+#gitLogo:hover {
+    transform: scale(1.2);
 }
 
 @font-face {

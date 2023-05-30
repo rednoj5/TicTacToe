@@ -17,7 +17,11 @@
             this.cards = document.querySelectorAll('.card');
             this.body = document.querySelector('body');
             this.htmlBoard = document.querySelector('.gameBoard');
+            this.htmlMain = document.querySelector('main');
             this.resetButton = document.querySelector('.reset');
+            this.htmlPlayerXDisplay = document.querySelector('.playerX');
+            this.htmlPlayerODisplay = document.querySelector('.playerO');
+
         },
         bindEvents: function() {
             this.cards.forEach(e => e.addEventListener('click', this.addToBoard));
@@ -38,6 +42,7 @@
                 board[target] = activePlayer;
                 gameBoard.render();
                 gameBoard.game(target);
+                gameBoard.highliteCurrentPlayer();
             };
         },
         checkTurn: function() {
@@ -91,9 +96,26 @@
             let info = document.createElement('div');
             info.setAttribute('class', 'info');
             info.textContent = `Player ${player} has won!`;
-            this.body.appendChild(info);
-            this.htmlBoard.style.filter = 'blur(5px)';
+            this.htmlMain.appendChild(info);
+            this.htmlBoard.style.filter = 'blur(4px)';
             gameBoard.gameEnded = true;
+        },
+        highliteCurrentPlayer: function() {
+            let xArray = this.xArray;
+            let oArray = this.oArray;
+
+            if (xArray.length === oArray.length) {
+                this.htmlPlayerXDisplay.style.opacity = '1';
+                this.htmlPlayerODisplay.style.opacity = '0.5';
+            } else {
+                this.htmlPlayerODisplay.style.opacity = '1';
+                this.htmlPlayerXDisplay.style.opacity = '0.5';
+            }
+
+            if (this.gameEnded === true) {
+                this.htmlPlayerODisplay.style.opacity = '0.5';
+                this.htmlPlayerXDisplay.style.opacity = '0.5';
+            }
         },
         restartGame: function() {
             gameBoard.board = new Array(9);
@@ -102,9 +124,10 @@
             gameBoard.render();
             let info = document.getElementsByClassName('info')[0];
             console.log(info);
-            gameBoard.body.removeChild(info);
+            gameBoard.htmlMain.removeChild(info);
             gameBoard.htmlBoard.style.filter = '';
             gameBoard.gameEnded = false;
+            gameBoard.highliteCurrentPlayer();
         }
     };
 
@@ -112,18 +135,7 @@
 
 })();
 
-const Player = (name) => {
-    this.name = name;
-
-    const getName = () => {
-        return name;
-    };
-
-    return { getName };
-};
-
 // tests
 
-let PlayerX = Player('x');
 
 // console.log(PlayerX.getName())
