@@ -87,15 +87,29 @@
                 let gameEnd2 = cond.every((num) => oArray.includes(num));
                 if (gameEnd1 == true) {
                     this.declareWinner('X');
+                    break;
                 } else if (gameEnd2 == true) {
                     this.declareWinner('O');
+                    break;
                 }
+            };
+
+            if (xArray.length > 4 && this.gameEnded === false) {
+                this.declareDraw();
             };
         },
         declareWinner: function(player) {
             let info = document.createElement('div');
             info.setAttribute('class', 'info');
             info.textContent = `Player ${player} has won!`;
+            this.htmlMain.appendChild(info);
+            this.htmlBoard.style.filter = 'blur(4px)';
+            gameBoard.gameEnded = true;
+        },
+        declareDraw: function() {
+            let info = document.createElement('div');
+            info.setAttribute('class', 'info');
+            info.textContent = `It's a draw!`;
             this.htmlMain.appendChild(info);
             this.htmlBoard.style.filter = 'blur(4px)';
             gameBoard.gameEnded = true;
@@ -123,7 +137,6 @@
             gameBoard.oArray = [];
             gameBoard.render();
             let info = document.getElementsByClassName('info')[0];
-            console.log(info);
             gameBoard.htmlMain.removeChild(info);
             gameBoard.htmlBoard.style.filter = '';
             gameBoard.gameEnded = false;
