@@ -7,10 +7,11 @@
     const gameBoard = {
         board: [0, 1, 2, 3, 4, 5, 6, 7, 8],
         gameEnded: false,
+        vsComputer: 0,
+        playingAs: 'o',
         init: function() {
             this.cacheDom();
             this.bindEvents();
-            this.aiPlay();
         },
         cacheDom: function() {
             this.cards = document.querySelectorAll('.card');
@@ -20,11 +21,18 @@
             this.resetButton = document.querySelector('.reset');
             this.htmlPlayerXDisplay = document.querySelector('.playerX');
             this.htmlPlayerODisplay = document.querySelector('.playerO');
-
+            this.htmlPvpButton = document.querySelector('#pvp');
+            this.htmlPveButton = document.querySelector('#pve');
+            this.htmlXButton = document.querySelector('#x');
+            this.htmlOButton = document.querySelector('#o');
         },
         bindEvents: function() {
             this.cards.forEach(e => e.addEventListener('click', this.addToBoard));
             this.resetButton.addEventListener('click', this.restartGame);
+            this.htmlPvpButton.addEventListener('click', this.pvp);
+            this.htmlPveButton.addEventListener('click', this.pve);
+            this.htmlXButton.addEventListener('click', this.playAsX);
+            this.htmlOButton.addEventListener('click', this.playAsO);
         },
         render: function() {
             let cardsLength = this.cards.length - 1;
@@ -49,7 +57,9 @@
                 gameBoard.render();
                 gameBoard.game(target);
                 gameBoard.highliteCurrentPlayer();
-                gameBoard.aiPlay();
+                if (gameBoard.vsComputer === 1) {
+                    gameBoard.aiPlay();
+                };
             };
         },
         checkTurn: function(board) {
@@ -160,7 +170,9 @@
             }
             gameBoard.gameEnded = false;
             gameBoard.highliteCurrentPlayer();
-            gameBoard.aiPlay();
+            if (gameBoard.vsComputer === 1 && gameBoard.playingAs === 'o') {
+                gameBoard.aiPlay();
+            };
         },
         aiPlay: function() {
             let board = this.board;
@@ -173,9 +185,52 @@
             gameBoard.render();
             gameBoard.game(aiMove);
             gameBoard.highliteCurrentPlayer();
+        },
+        pvp: function() {
+            if (gameBoard.vsComputer === 1) {
+                gameBoard.vsComputer = 0;
+                gameBoard.htmlPveButton.classList.remove('pushed');
+                this.classList.add('pushed');
+                gameBoard.restartGame();
+                gameBoard.playAsO();
+            }
+        },
+        pve: function() {
+            if (gameBoard.vsComputer === 0) {
+                gameBoard.vsComputer = 1;
+                gameBoard.aiPlay();
+                gameBoard.htmlPvpButton.classList.remove('pushed');
+                this.classList.add('pushed');
+            }
+        },
+        playAsX: function() {
+            console.log('X');
+            if (gameBoard.playingAs === 'o') {
+                gameBoard.playingAs = 'x';
+                huPlayer = 'x';
+                aiPlayer = 'o';
+                this.classList.add('pushed');
+                gameBoard.htmlOButton.classList.remove('pushed');
+                gameBoard.restartGame();
+            }
+        },
+        playAsO: function() {
+            console.log('O');
+            if (gameBoard.playingAs === 'x') {
+                gameBoard.playingAs = 'o';
+                huPlayer = 'o';
+                aiPlayer = 'x';
+                this.classList.add('pushed');
+                gameBoard.htmlXButton.classList.remove('pushed');
+                gameBoard.restartGame();
+            }
         }
     };
 
+    let huPlayer = 'o';
+    let aiPlayer = 'x';
+    let round = 0;
+    
     function minimax(newBoard, player){
       round++;
 
@@ -234,9 +289,6 @@
 
     }
 
-    let huPlayer = 'o';
-    let aiPlayer = 'x';
-    let round = 0;
 
     function emptyIndexies(board){
         return  board.filter(s => s != 'o' && s != 'x');
