@@ -9,6 +9,7 @@
         gameEnded: false,
         vsComputer: 0,
         playingAs: 'o',
+        buttonsDisabled: 1,
         init: function() {
             this.cacheDom();
             this.bindEvents();
@@ -176,11 +177,16 @@
         },
         aiPlay: function() {
             let board = this.board;
-            let bestSpot = minimax(board, aiPlayer);
+            let bestSpot = minimax(board, theComputer);
             let aiMove = bestSpot.index;
+            let random = Math.floor(Math.random() * (100 + 1));
+            if (random < level) {
+                aiMove = rdmShittyMove(board);
+                console.log('happening');
+            }
             // console.log("index: " + bestSpot.index);
             // console.log("function calls: " + fc);
-            let activePlayer = aiPlayer;
+            let activePlayer = theComputer;
             board[aiMove] = activePlayer;
             gameBoard.render();
             gameBoard.game(aiMove);
@@ -193,33 +199,37 @@
                 this.classList.add('pushed');
                 gameBoard.restartGame();
                 gameBoard.playAsO();
+                gameBoard.htmlOButton.classList.add('disabled');
+                gameBoard.htmlXButton.classList.add('disabled');
+                gameBoard.buttonsDisabled = 1;
             }
         },
         pve: function() {
             if (gameBoard.vsComputer === 0) {
                 gameBoard.vsComputer = 1;
-                gameBoard.aiPlay();
+                gameBoard.restartGame();
                 gameBoard.htmlPvpButton.classList.remove('pushed');
                 this.classList.add('pushed');
+                gameBoard.htmlOButton.classList.remove('disabled');
+                gameBoard.htmlXButton.classList.remove('disabled');
+                gameBoard.buttonsDisabled = 0;
             }
         },
         playAsX: function() {
-            console.log('X');
-            if (gameBoard.playingAs === 'o') {
+            if (gameBoard.playingAs === 'o' && gameBoard.buttonsDisabled === 0) {
                 gameBoard.playingAs = 'x';
-                huPlayer = 'x';
-                aiPlayer = 'o';
+                thePlayer = 'x';
+                theComputer = 'o';
                 this.classList.add('pushed');
                 gameBoard.htmlOButton.classList.remove('pushed');
                 gameBoard.restartGame();
             }
         },
         playAsO: function() {
-            console.log('O');
-            if (gameBoard.playingAs === 'x') {
+            if (gameBoard.playingAs === 'x' && gameBoard.buttonsDisabled === 0) {
                 gameBoard.playingAs = 'o';
-                huPlayer = 'o';
-                aiPlayer = 'x';
+                thePlayer = 'o';
+                theComputer = 'x';
                 this.classList.add('pushed');
                 gameBoard.htmlXButton.classList.remove('pushed');
                 gameBoard.restartGame();
@@ -227,47 +237,55 @@
         }
     };
 
-    let huPlayer = 'o';
-    let aiPlayer = 'x';
+    let thePlayer = 'o';
+    let theComputer = 'x';
     let round = 0;
+    let level = 40;
     
-    function minimax(newBoard, player){
+    function rdmShittyMove(board) {
+        let possibleMoves = emptyIndexies(board);
+        let number = Math.floor(Math.random() * (possibleMoves.length));
+        return possibleMoves[number];
+    };
+
+
+    function minimax(board, player){
       round++;
 
-      let emptyCard = emptyIndexies(newBoard);
+      let emptySpots = emptyIndexies(board);
     
-      if (gameBoard.checkWinner(newBoard) == huPlayer){
+      if (gameBoard.checkWinner(board) == thePlayer){
             return {score:-10};
-        } else if (gameBoard.checkWinner(newBoard) == aiPlayer){
+        } else if (gameBoard.checkWinner(board) == theComputer){
             return {score:10};
-        } else if (emptyCard.length === 0){
+        } else if (emptySpots.length === 0){
             return {score:0};
         }
     
       let moves = [];
     
-      for (let i = 0; i < emptyCard.length; i++){
+      for (let i = 0; i < emptySpots.length; i++){
         let move = {};
         
-        move.index = newBoard[emptyCard[i]];
+        move.index = board[emptySpots[i]];
     
-        newBoard[emptyCard[i]] = player;
+        board[emptySpots[i]] = player;
     
-        if (player == aiPlayer) {
-          let result = minimax(newBoard, huPlayer);
+        if (player == theComputer) {
+          let result = minimax(board, thePlayer);
           move.score = result.score;
         } else {
-          let result = minimax(newBoard, aiPlayer);
+          let result = minimax(board, theComputer);
           move.score = result.score;
         }
     
-        newBoard[emptyCard[i]] = move.index;
+        board[emptySpots[i]] = move.index;
     
         moves.push(move);
       }
     
       let bestMove;
-      if (player === aiPlayer) {
+      if (player === theComputer) {
         let bestScore = -10000;
         for(let i = 0; i < moves.length; i++){
           if(moves[i].score > bestScore){
@@ -291,7 +309,7 @@
 
 
     function emptyIndexies(board){
-        return  board.filter(s => s != 'o' && s != 'x');
+        return  board.filter(e => e != 'o' && e != 'x');
     };
 
     gameBoard.init();

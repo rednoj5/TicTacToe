@@ -185,6 +185,16 @@ main {
     background-color: #0ea5e9;    
 }
 
+.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: #7dd3fc;
+}
+
+.disabled:hover {
+    background-color: #7dd3fc;
+}
+
 footer {
     position: fixed;
     bottom: 0;
