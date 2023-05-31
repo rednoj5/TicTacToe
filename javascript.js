@@ -5,13 +5,12 @@
 
 (function() {
     const gameBoard = {
-        board: new Array(9),
-        xArray: [],
-        oArray: [],
+        board: [0, 1, 2, 3, 4, 5, 6, 7, 8],
         gameEnded: false,
         init: function() {
             this.cacheDom();
             this.bindEvents();
+            this.aiPlay();
         },
         cacheDom: function() {
             this.cards = document.querySelectorAll('.card');
@@ -31,23 +30,31 @@
             let cardsLength = this.cards.length - 1;
 
             for(let i = 0; i <= cardsLength; i++) {
-                this.cards[i].textContent = this.board[i];
+                let currentCard = this.cards[i];
+                let currentMark = this.board[i];
+                if (typeof(currentMark) == 'string') {
+                    currentCard.textContent = currentMark;
+                } else {
+                    currentCard.textContent = '';
+                }
             }
         },
         addToBoard: function() {
             let target = this.getAttribute('data-id');
             let board = gameBoard.board;
-            let activePlayer = gameBoard.checkTurn();
-            if (board[target] === undefined && gameBoard.gameEnded !== true) {
+            let activePlayer = gameBoard.checkTurn(board);
+
+            if (typeof(board[target]) == 'number' && gameBoard.gameEnded !== true) {
                 board[target] = activePlayer;
                 gameBoard.render();
                 gameBoard.game(target);
                 gameBoard.highliteCurrentPlayer();
+                gameBoard.aiPlay();
             };
         },
-        checkTurn: function() {
-            let xLength = this.board.filter((e) => e === 'x').length;
-            let oLength = this.board.filter((e) => e === 'o').length;
+        checkTurn: function(board) {
+            let xLength = board.filter((e) => e === 'x').length;
+            let oLength = board.filter((e) => e === 'o').length;
 
             if (xLength === oLength) {
                 return 'x';
@@ -56,16 +63,7 @@
             };
         },
         game: function(index) {
-            let xArray = this.xArray;
-            let oArray = this.oArray;
-
-            if (xArray.length == oArray.length) {
-                this.xArray.push(parseInt(index));
-            } else {
-                this.oArray.push(parseInt(index));
-            };
-
-            let winner = this.checkWinner();
+            let winner = this.checkWinner(this.board);
 
             if (winner === 'x') {
                 this.declareWinner('X');
@@ -75,9 +73,21 @@
                 this.declareDraw();
             };
         },
-        checkWinner: function() {
-            let xArray = this.xArray;
-            let oArray = this.oArray;
+        checkWinner: function(board) {
+            let xArray = [];
+            let oArray = [];
+
+            let xIndex = board.indexOf('x');
+            while (xIndex !== -1) {
+                xArray.push(xIndex);
+                xIndex = board.indexOf('x', xIndex + 1)
+            };
+
+            let oIndex = board.indexOf('o');
+            while (oIndex !== -1) {
+                oArray.push(oIndex);
+                oIndex = board.indexOf('o', oIndex + 1)
+            };
 
             let winConditions = [
                 [0, 1, 2],
@@ -124,10 +134,9 @@
             }
         },
         highliteCurrentPlayer: function() {
-            let xArray = this.xArray;
-            let oArray = this.oArray;
+            let currentPlayer = this.checkTurn(this.board);
 
-            if (xArray.length === oArray.length) {
+            if (currentPlayer == 'x') {
                 this.htmlPlayerXDisplay.style.opacity = '1';
                 this.htmlPlayerODisplay.style.opacity = '0.5';
             } else {
@@ -141,9 +150,8 @@
             }
         },
         restartGame: function() {
-            gameBoard.board = new Array(9);
-            gameBoard.xArray = [];
-            gameBoard.oArray = [];
+            gameBoard.board = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+            round = 0;
             gameBoard.render();
             if (gameBoard.gameEnded === true) {
                 let info = document.getElementsByClassName('info')[0];
@@ -152,7 +160,86 @@
             }
             gameBoard.gameEnded = false;
             gameBoard.highliteCurrentPlayer();
+            gameBoard.aiPlay();
+        },
+        aiPlay: function() {
+            let board = this.board;
+            let bestSpot = minimax(board, aiPlayer);
+            let aiMove = bestSpot.index;
+            // console.log("index: " + bestSpot.index);
+            // console.log("function calls: " + fc);
+            let activePlayer = aiPlayer;
+            board[aiMove] = activePlayer;
+            gameBoard.render();
+            gameBoard.game(aiMove);
+            gameBoard.highliteCurrentPlayer();
         }
+    };
+
+    function minimax(newBoard, player){
+      round++;
+
+      let emptyCard = emptyIndexies(newBoard);
+    
+      if (gameBoard.checkWinner(newBoard) == huPlayer){
+            return {score:-10};
+        } else if (gameBoard.checkWinner(newBoard) == aiPlayer){
+            return {score:10};
+        } else if (emptyCard.length === 0){
+            return {score:0};
+        }
+    
+      let moves = [];
+    
+      for (let i = 0; i < emptyCard.length; i++){
+        let move = {};
+        
+        move.index = newBoard[emptyCard[i]];
+    
+        newBoard[emptyCard[i]] = player;
+    
+        if (player == aiPlayer) {
+          let result = minimax(newBoard, huPlayer);
+          move.score = result.score;
+        } else {
+          let result = minimax(newBoard, aiPlayer);
+          move.score = result.score;
+        }
+    
+        newBoard[emptyCard[i]] = move.index;
+    
+        moves.push(move);
+      }
+    
+      let bestMove;
+      if (player === aiPlayer) {
+        let bestScore = -10000;
+        for(let i = 0; i < moves.length; i++){
+          if(moves[i].score > bestScore){
+            bestScore = moves[i].score;
+            bestMove = i;
+          }
+        }
+      } else {
+        let bestScore = 10000;
+        for(let i = 0; i < moves.length; i++){
+          if(moves[i].score < bestScore){
+            bestScore = moves[i].score;
+            bestMove = i;
+          }
+        }
+      }
+        
+        return moves[bestMove];
+
+    }
+
+    let huPlayer = 'o';
+    let aiPlayer = 'x';
+    let round = 0;
+
+    function emptyIndexies(board){
+        return  board.filter(s => s != 'o' && s != 'x');
     };
 
     gameBoard.init();
