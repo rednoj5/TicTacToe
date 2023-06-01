@@ -156,8 +156,27 @@ main {
 .pveSettings {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr;
+    grid-template-rows: 1fr 1fr;
     justify-items: center;
+}
+
+.levelPicker {
+    grid-area: 2 / 1 / 3 / 3;
+    align-items: center;
+}
+
+.level {
+    width: 150px;
+    height:30px;
+    color: #fde047;
+    cursor: pointer;
+    background-color: #7dd3fc;
+    border: none;
+    box-shadow: 0 2px 0 2px #172554;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: .8rem;
+    margin-top: 30px;
 }
 
 .markPicker {

@@ -26,6 +26,9 @@
             this.htmlPveButton = document.querySelector('#pve');
             this.htmlXButton = document.querySelector('#x');
             this.htmlOButton = document.querySelector('#o');
+            this.htmlNormalLevel = document.querySelector('#normal');
+            this.htmlHardLevel = document.querySelector('#hard');
+            this.htmlUnbeatableLevel = document.querySelector('#unbeatable');
         },
         bindEvents: function() {
             this.cards.forEach(e => e.addEventListener('click', this.addToBoard));
@@ -34,6 +37,9 @@
             this.htmlPveButton.addEventListener('click', this.pve);
             this.htmlXButton.addEventListener('click', this.playAsX);
             this.htmlOButton.addEventListener('click', this.playAsO);
+            this.htmlNormalLevel.addEventListener('click', this.levelNormal);
+            this.htmlHardLevel.addEventListener('click', this.levelHard);
+            this.htmlUnbeatableLevel.addEventListener('click', this.levelUnbeatable);
         },
         render: function() {
             let cardsLength = this.cards.length - 1;
@@ -179,13 +185,16 @@
             let board = this.board;
             let bestSpot = minimax(board, theComputer);
             let aiMove = bestSpot.index;
-            let random = Math.floor(Math.random() * (100 + 1));
+            let random = Math.floor(Math.random() * 100);
+            let emptySpaceArray = emptyIndexies(board);
+            console.log(level);
+            if (emptySpaceArray.length === 9) {
+                aiMove = rdmShittyMove(board);
+            }
             if (random < level) {
                 aiMove = rdmShittyMove(board);
-                console.log('happening');
+                console.log('random');
             }
-            // console.log("index: " + bestSpot.index);
-            // console.log("function calls: " + fc);
             let activePlayer = theComputer;
             board[aiMove] = activePlayer;
             gameBoard.render();
@@ -201,6 +210,9 @@
                 gameBoard.playAsO();
                 gameBoard.htmlOButton.classList.add('disabled');
                 gameBoard.htmlXButton.classList.add('disabled');
+                gameBoard.htmlNormalLevel.classList.add('disabled');
+                gameBoard.htmlHardLevel.classList.add('disabled');
+                gameBoard.htmlUnbeatableLevel.classList.add('disabled');
                 gameBoard.buttonsDisabled = 1;
             }
         },
@@ -212,6 +224,9 @@
                 this.classList.add('pushed');
                 gameBoard.htmlOButton.classList.remove('disabled');
                 gameBoard.htmlXButton.classList.remove('disabled');
+                gameBoard.htmlNormalLevel.classList.remove('disabled');
+                gameBoard.htmlHardLevel.classList.remove('disabled');
+                gameBoard.htmlUnbeatableLevel.classList.remove('disabled');
                 gameBoard.buttonsDisabled = 0;
             }
         },
@@ -234,13 +249,40 @@
                 gameBoard.htmlXButton.classList.remove('pushed');
                 gameBoard.restartGame();
             }
+        },
+        levelNormal: function() {
+            if (level !== 50 && gameBoard.buttonsDisabled === 0) {
+                level = 50;
+                this.classList.add('pushed');
+                gameBoard.htmlHardLevel.classList.remove('pushed');
+                gameBoard.htmlUnbeatableLevel.classList.remove('pushed');
+                gameBoard.restartGame();
+            }
+        },
+        levelHard: function() {
+            if (level !== 30 && gameBoard.buttonsDisabled === 0) {
+                level = 30;
+                this.classList.add('pushed');
+                gameBoard.htmlNormalLevel.classList.remove('pushed');
+                gameBoard.htmlUnbeatableLevel.classList.remove('pushed');
+                gameBoard.restartGame();
+            }
+        },
+        levelUnbeatable: function() {
+            if (level !== 0 && gameBoard.buttonsDisabled === 0) {
+                level = 0;
+                this.classList.add('pushed');
+                gameBoard.htmlNormalLevel.classList.remove('pushed');
+                gameBoard.htmlHardLevel.classList.remove('pushed');
+                gameBoard.restartGame();
+            }
         }
     };
 
     let thePlayer = 'o';
     let theComputer = 'x';
     let round = 0;
-    let level = 40;
+    let level = 50;
     
     function rdmShittyMove(board) {
         let possibleMoves = emptyIndexies(board);
