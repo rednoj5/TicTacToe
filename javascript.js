@@ -214,6 +214,8 @@
                 gameBoard.htmlHardLevel.classList.add('disabled');
                 gameBoard.htmlUnbeatableLevel.classList.add('disabled');
                 gameBoard.buttonsDisabled = 1;
+                gameBoard.htmlOButton.classList.add('pushed');
+                gameBoard.htmlXButton.classList.remove('pushed');
             }
         },
         pve: function() {
@@ -235,7 +237,7 @@
                 gameBoard.playingAs = 'x';
                 thePlayer = 'x';
                 theComputer = 'o';
-                this.classList.add('pushed');
+                gameBoard.htmlXButton.classList.add('pushed');
                 gameBoard.htmlOButton.classList.remove('pushed');
                 gameBoard.restartGame();
             }
@@ -245,7 +247,7 @@
                 gameBoard.playingAs = 'o';
                 thePlayer = 'o';
                 theComputer = 'x';
-                this.classList.add('pushed');
+                gameBoard.htmlOButton.classList.add('pushed');
                 gameBoard.htmlXButton.classList.remove('pushed');
                 gameBoard.restartGame();
             }
